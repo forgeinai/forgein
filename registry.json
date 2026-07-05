@@ -1,0 +1,127 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-07-05",
+  "registry": "https://github.com/shadowmodder/forgein",
+  "skills": [
+    {
+      "id": "forgein",
+      "command": "forgein",
+      "name": "Forgein",
+      "description": "The full Forgein toolkit: skill optimizer, memory manager, and security checker in one command.",
+      "tags": ["productivity", "meta", "memory", "security", "skills"],
+      "signals": ["productivity", "workflow", "memory", "skills", "security"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/forgein.md",
+      "install_as": "forgein.md"
+    },
+    {
+      "id": "vibe-sec",
+      "command": "sec",
+      "name": "Vibe Sec",
+      "description": "Security vibe check on staged git changes or any file/directory. Catches secrets, injection, path traversal, XSS, SSRF, and more.",
+      "tags": ["security", "git", "review", "owasp", "devsecops"],
+      "signals": ["security", "vulnerabilities", "auth", "api keys", "secrets", "injection", "owasp", "pen test", "audit"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/vibe-sec.md",
+      "install_as": "sec.md"
+    },
+    {
+      "id": "claude-mem",
+      "command": "mem",
+      "name": "Claude Mem",
+      "description": "CRUD for Claude's auto-memory system. List, search, add, prune stale entries, and audit the memory index.",
+      "tags": ["memory", "productivity", "claude", "context"],
+      "signals": ["memory", "remember", "forget", "context", "recall", "notes", "across sessions"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/claude-mem.md",
+      "install_as": "mem.md"
+    },
+    {
+      "id": "code-review",
+      "command": "review",
+      "name": "Code Review",
+      "description": "Multi-dimensional code review across bugs, performance, security, and style. Runs parallel reviewers and ranks findings by severity.",
+      "tags": ["git", "review", "code quality", "bugs", "performance"],
+      "signals": ["code review", "pull request", "pr", "diff", "review", "merge", "feedback"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/code-review.md",
+      "install_as": "review.md"
+    },
+    {
+      "id": "commit",
+      "command": "commit",
+      "name": "Smart Commit",
+      "description": "Generates conventional commit messages from staged changes with automatic scope detection and breaking-change flagging.",
+      "tags": ["git", "productivity", "conventional commits", "changelog"],
+      "signals": ["git", "commits", "commit messages", "changelog", "conventional commits", "semantic versioning"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/commit.md",
+      "install_as": "commit.md"
+    },
+    {
+      "id": "standup",
+      "command": "standup",
+      "name": "Standup",
+      "description": "Generates a daily standup from git log, open PRs, and in-progress tasks. Done / doing / blocked format.",
+      "tags": ["productivity", "git", "agile", "communication"],
+      "signals": ["standup", "daily", "scrum", "agile", "team", "status update", "done today"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/standup.md",
+      "install_as": "standup.md"
+    },
+    {
+      "id": "pr-monitor",
+      "command": "pr-monitor",
+      "name": "PR Monitor",
+      "description": "Checks CI status across all your open PRs across repos. Flags failures that need attention vs. known-unfixable infrastructure checks.",
+      "tags": ["git", "ci", "github", "automation", "monitoring"],
+      "signals": ["open prs", "ci failures", "github actions", "pull requests", "lint", "checks", "ci/cd"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/pr-monitor.md",
+      "install_as": "pr-monitor.md"
+    },
+    {
+      "id": "test-gen",
+      "command": "test-gen",
+      "name": "Test Gen",
+      "description": "Generates unit and integration tests for a function or file. Detects framework (pytest, jest, go test) and writes idiomatic tests with edge cases.",
+      "tags": ["testing", "quality", "tdd", "pytest", "jest"],
+      "signals": ["tests", "testing", "unit tests", "pytest", "jest", "coverage", "tdd", "edge cases"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/test-gen.md",
+      "install_as": "test-gen.md"
+    },
+    {
+      "id": "explain",
+      "command": "explain",
+      "name": "Explain Codebase",
+      "description": "Onboards a new contributor to a codebase. Maps architecture, entry points, data flow, and key abstractions from a fresh read of the repo.",
+      "tags": ["documentation", "onboarding", "architecture", "learning"],
+      "signals": ["new contributor", "onboarding", "architecture", "explain", "how does this work", "codebase tour"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/explain.md",
+      "install_as": "explain.md"
+    },
+    {
+      "id": "changelog",
+      "command": "changelog",
+      "name": "Changelog",
+      "description": "Generates a CHANGELOG.md section from git log between two tags or since the last release. Groups by feat/fix/breaking.",
+      "tags": ["git", "documentation", "release", "changelog", "semver"],
+      "signals": ["changelog", "release notes", "release", "version", "semver", "tag"],
+      "author": "forgein-ai",
+      "version": "1.0.0",
+      "file": "skills/changelog.md",
+      "install_as": "changelog.md"
+    }
+  ]
+}
