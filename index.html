@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forgein — Claude Code Productivity Toolkit</title>
+<meta name="description" content="Three commands. Full control of Claude Code. Skill optimizer, memory manager, and security scanner — one install.">
+<meta property="og:title" content="Forgein — Claude Code Productivity Toolkit">
+<meta property="og:description" content="Extend Claude Code with /forgein optimize, mem, and sec. Open source. One-line install.">
+<meta property="og:url" content="https://forgein.ai">
+<style>
+/* ── Tokens ────────────────────────────────────────────────────────── */
+:root {
+  --bg:        #080B14;
+  --surface:   #0E1219;
+  --surface2:  #141921;
+  --border:    #1A2232;
+  --border2:   #222C3E;
+  --text:      #E8ECF4;
+  --muted:     #6B7785;
+  --muted2:    #8A96A6;
+  --accent:    #6366F1;
+  --accent-hi: #818CF8;
+  --accent-lo: rgba(99,102,241,0.12);
+  --green:     #34D399;
+  --green-lo:  rgba(52,211,153,0.1);
+  --yellow:    #FBBF24;
+  --red:       #F87171;
+  --mono: 'SF Mono','Cascadia Code','JetBrains Mono','Menlo','Courier New',monospace;
+  --sans: system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --radius: 8px;
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg:        #F5F6FA;
+    --surface:   #FFFFFF;
+    --surface2:  #F0F1F7;
+    --border:    #DDE0EC;
+    --border2:   #C8CCE0;
+    --text:      #0F1117;
+    --muted:     #6B7280;
+    --muted2:    #9CA3AF;
+    --accent:    #4F46E5;
+    --accent-hi: #6366F1;
+    --accent-lo: rgba(79,70,229,0.08);
+    --green:     #059669;
+    --green-lo:  rgba(5,150,105,0.08);
+    --yellow:    #D97706;
+    --red:       #DC2626;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#080B14;--surface:#0E1219;--surface2:#141921;--border:#1A2232;
+  --border2:#222C3E;--text:#E8ECF4;--muted:#6B7785;--muted2:#8A96A6;
+  --accent:#6366F1;--accent-hi:#818CF8;--accent-lo:rgba(99,102,241,0.12);
+  --green:#34D399;--green-lo:rgba(52,211,153,0.1);--yellow:#FBBF24;--red:#F87171;
+}
+:root[data-theme="light"] {
+  --bg:#F5F6FA;--surface:#FFFFFF;--surface2:#F0F1F7;--border:#DDE0EC;
+  --border2:#C8CCE0;--text:#0F1117;--muted:#6B7280;--muted2:#9CA3AF;
+  --accent:#4F46E5;--accent-hi:#6366F1;--accent-lo:rgba(79,70,229,0.08);
+  --green:#059669;--green-lo:rgba(5,150,105,0.08);--yellow:#D97706;--red:#DC2626;
+}
+
+/* ── Reset + Base ──────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:var(--accent-hi);text-decoration:none}
+a:hover{text-decoration:underline}
+button{cursor:pointer;border:none;background:none;font:inherit;color:inherit}
+
+/* subtle grid bg */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:40px 40px;
+  opacity:.35;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── Layout ────────────────────────────────────────────────────────── */
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* ── Nav ───────────────────────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:100;
+  border-bottom:1px solid var(--border);
+  background:color-mix(in srgb,var(--bg) 80%,transparent);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.nav-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  height:56px;
+}
+.nav-logo{
+  font-family:var(--mono);
+  font-size:.95rem;
+  font-weight:600;
+  letter-spacing:.02em;
+  color:var(--text);
+  display:flex;align-items:center;gap:8px;
+}
+.nav-logo-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 8px var(--accent);
+}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{
+  font-size:.875rem;color:var(--muted2);
+  padding:6px 12px;border-radius:6px;
+  transition:color .15s,background .15s;
+}
+.nav-link:hover{color:var(--text);background:var(--surface2);text-decoration:none}
+.nav-cta{
+  font-size:.875rem;font-weight:500;
+  background:var(--accent);color:#fff;
+  padding:7px 16px;border-radius:6px;
+  transition:background .15s,opacity .15s;
+  margin-left:8px;
+}
+.nav-cta:hover{background:var(--accent-hi);text-decoration:none}
+.theme-btn{
+  width:34px;height:34px;border-radius:6px;
+  display:grid;place-items:center;
+  color:var(--muted2);
+  transition:background .15s,color .15s;
+  margin-right:2px;
+}
+.theme-btn:hover{background:var(--surface2);color:var(--text)}
+.theme-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Hero ──────────────────────────────────────────────────────────── */
+.hero{
+  padding:96px 0 80px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:64px;
+  align-items:center;
+}
+@media(max-width:860px){.hero{grid-template-columns:1fr;padding:64px 0 48px;gap:48px}}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted2);
+  border:1px solid var(--border2);
+  padding:5px 12px;border-radius:999px;
+  margin-bottom:28px;
+}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+
+.hero-h1{
+  font-family:var(--mono);
+  font-size:clamp(2.2rem,5vw,3.4rem);
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:-.02em;
+  text-wrap:balance;
+  margin-bottom:20px;
+}
+.hero-h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--accent-hi),var(--green));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-size:1.05rem;color:var(--muted2);
+  max-width:480px;line-height:1.7;
+  margin-bottom:36px;
+}
+.install-block{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+  margin-bottom:20px;
+}
+.install-cmd{
+  font-family:var(--mono);font-size:.875rem;
+  color:var(--green);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.copy-btn{
+  flex-shrink:0;
+  font-family:var(--mono);font-size:.75rem;
+  color:var(--muted2);
+  border:1px solid var(--border2);
+  padding:5px 12px;border-radius:6px;
+  transition:background .15s,color .15s;
+}
+.copy-btn:hover{background:var(--surface2);color:var(--text)}
+.copy-btn.copied{color:var(--green);border-color:var(--green)}
+.hero-links{display:flex;align-items:center;gap:20px;font-size:.875rem;color:var(--muted2)}
+.hero-links a{color:var(--muted2);display:flex;align-items:center;gap:6px;transition:color .15s}
+.hero-links a:hover{color:var(--text);text-decoration:none}
+.hero-links a svg{width:14px;height:14px}
+
+/* ── Terminal ──────────────────────────────────────────────────────── */
+.terminal{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  overflow:hidden;
+  font-family:var(--mono);font-size:.82rem;
+  line-height:1.65;
+  box-shadow:0 24px 60px rgba(0,0,0,.4);
+}
+.terminal-bar{
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  padding:10px 14px;
+  display:flex;align-items:center;gap:8px;
+}
+.dot{width:10px;height:10px;border-radius:50%}
+.dot-r{background:#F87171}.dot-y{background:#FBBF24}.dot-g{background:#34D399}
+.terminal-title{margin-left:8px;color:var(--muted);font-size:.75rem;letter-spacing:.04em}
+.terminal-body{padding:18px 20px}
+.t-prompt{color:var(--muted2)}
+.t-cmd{color:var(--accent-hi);font-weight:600}
+.t-out{color:var(--text)}
+.t-green{color:var(--green)}
+.t-yellow{color:var(--yellow)}
+.t-muted{color:var(--muted)}
+.t-line{display:block;min-height:1.65em}
+.t-sep{display:block;border-top:1px solid var(--border);margin:10px 0}
+.t-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.t-table td{padding:2px 10px 2px 0;vertical-align:top}
+.t-table td:first-child{color:var(--accent-hi);white-space:nowrap}
+.t-table td:nth-child(2){color:var(--muted);white-space:nowrap;padding-right:14px}
+
+/* ── Section common ────────────────────────────────────────────────── */
+.section{padding:80px 0;border-top:1px solid var(--border)}
+.eyebrow{
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);
+  margin-bottom:14px;display:block;
+}
+.section-h{
+  font-family:var(--mono);
+  font-size:clamp(1.6rem,3.5vw,2.2rem);
+  font-weight:700;letter-spacing:-.02em;line-height:1.15;
+  text-wrap:balance;margin-bottom:14px;
+}
+.section-sub{font-size:1rem;color:var(--muted2);max-width:540px;line-height:1.7;margin-bottom:48px}
+
+/* ── Commands ──────────────────────────────────────────────────────── */
+.cmd-grid{display:flex;flex-direction:column;gap:64px}
+.cmd-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:56px;align-items:start;
+}
+.cmd-row.flip{direction:rtl}
+.cmd-row.flip > *{direction:ltr}
+@media(max-width:760px){.cmd-row,.cmd-row.flip{grid-template-columns:1fr;direction:ltr}}
+.cmd-info{}
+.cmd-name{
+  font-family:var(--mono);font-size:1.05rem;font-weight:700;
+  color:var(--accent-hi);margin-bottom:16px;
+  display:inline-block;
+  background:var(--accent-lo);
+  padding:6px 14px;border-radius:6px;
+  border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+}
+.cmd-h{
+  font-family:var(--mono);font-size:1.4rem;font-weight:700;
+  line-height:1.2;letter-spacing:-.02em;margin-bottom:12px;
+  text-wrap:balance;
+}
+.cmd-p{font-size:.95rem;color:var(--muted2);line-height:1.7;margin-bottom:24px}
+.cmd-features{list-style:none;display:flex;flex-direction:column;gap:8px}
+.cmd-features li{
+  display:flex;align-items:baseline;gap:10px;
+  font-size:.875rem;color:var(--muted2);
+}
+.cmd-features li::before{
+  content:'›';color:var(--accent);font-family:var(--mono);font-size:1rem;flex-shrink:0;
+}
+
+/* ── Algorithm ─────────────────────────────────────────────────────── */
+.algo-flow{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  margin-bottom:48px;
+}
+@media(max-width:700px){.algo-flow{grid-template-columns:1fr 1fr;gap:16px}}
+.algo-step{
+  display:flex;flex-direction:column;
+  padding:20px 20px 20px 0;
+  position:relative;
+}
+.algo-step:not(:last-child)::after{
+  content:'→';
+  position:absolute;right:-2px;top:22px;
+  color:var(--muted);font-size:.9rem;
+}
+@media(max-width:700px){.algo-step::after{display:none}}
+.algo-num{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;
+  color:var(--accent);margin-bottom:8px;
+}
+.algo-title{font-family:var(--mono);font-size:.9rem;font-weight:700;margin-bottom:6px}
+.algo-desc{font-size:.8rem;color:var(--muted2);line-height:1.55}
+.algo-code{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;
+  font-family:var(--mono);font-size:.8rem;line-height:1.7;
+  overflow-x:auto;
+}
+.ac{color:var(--accent-hi)}.ag{color:var(--green)}.am{color:var(--muted2)}.ay{color:var(--yellow)}
+
+/* ── Registry ──────────────────────────────────────────────────────── */
+.registry-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:12px;
+}
+.skill-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+  transition:border-color .15s,background .15s;
+  cursor:default;
+}
+.skill-card:hover{border-color:var(--border2);background:var(--surface2)}
+.skill-cmd{
+  font-family:var(--mono);font-size:.8rem;
+  color:var(--accent-hi);margin-bottom:8px;
+  display:block;
+}
+.skill-name{font-size:.875rem;font-weight:600;margin-bottom:4px}
+.skill-desc{font-size:.78rem;color:var(--muted2);line-height:1.5}
+.skill-tag{
+  display:inline-block;margin-top:8px;
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;
+  background:var(--surface2);color:var(--muted);
+  padding:2px 7px;border-radius:4px;border:1px solid var(--border);
+}
+.forgein-card{border-color:color-mix(in srgb,var(--accent) 40%,transparent)}
+.forgein-card .skill-cmd{color:var(--accent-hi)}
+.registry-cta{
+  margin-top:24px;
+  display:flex;align-items:center;gap:16px;
+  font-size:.875rem;color:var(--muted2);
+}
+.registry-cta a{color:var(--accent-hi);font-family:var(--mono)}
+
+/* ── Pro ───────────────────────────────────────────────────────────── */
+.pro-section{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:56px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:56px;
+  align-items:center;
+}
+@media(max-width:760px){.pro-section{grid-template-columns:1fr;padding:36px 28px;gap:36px}}
+.pro-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;
+  text-transform:uppercase;
+  background:var(--yellow);color:#000;
+  padding:4px 10px;border-radius:4px;
+  margin-bottom:20px;font-weight:700;
+}
+.pro-h{font-family:var(--mono);font-size:1.8rem;font-weight:700;letter-spacing:-.02em;line-height:1.2;margin-bottom:14px}
+.pro-p{font-size:.95rem;color:var(--muted2);line-height:1.7;margin-bottom:28px}
+.pro-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:0}
+.pro-features li{
+  display:flex;align-items:baseline;gap:10px;
+  font-size:.875rem;color:var(--muted2);
+}
+.pro-features li::before{content:'✦';color:var(--yellow);font-size:.7rem;flex-shrink:0}
+.pro-form{display:flex;flex-direction:column;gap:10px}
+.pro-form label{font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;color:var(--muted2);text-transform:uppercase}
+.pro-input{
+  background:var(--bg);border:1px solid var(--border2);
+  color:var(--text);font:inherit;font-size:.95rem;
+  padding:11px 14px;border-radius:var(--radius);
+  outline:none;transition:border-color .15s;
+  width:100%;
+}
+.pro-input:focus{border-color:var(--accent)}
+.pro-submit{
+  background:var(--accent);color:#fff;
+  font-weight:600;font-size:.95rem;
+  padding:12px 20px;border-radius:var(--radius);
+  transition:background .15s;width:100%;
+}
+.pro-submit:hover{background:var(--accent-hi)}
+.pro-note{font-size:.78rem;color:var(--muted);text-align:center;margin-top:4px}
+
+/* ── Footer ────────────────────────────────────────────────────────── */
+footer{
+  border-top:1px solid var(--border);
+  padding:40px 0;
+  display:flex;
+}
+.footer-inner{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;
+}
+.footer-logo{font-family:var(--mono);font-size:.875rem;font-weight:600;color:var(--muted2)}
+.footer-links{display:flex;align-items:center;gap:20px}
+.footer-links a{font-size:.8rem;color:var(--muted);transition:color .15s}
+.footer-links a:hover{color:var(--text);text-decoration:none}
+.footer-right{font-family:var(--mono);font-size:.75rem;color:var(--muted);letter-spacing:.02em}
+
+/* ── Animations ────────────────────────────────────────────────────── */
+@media(prefers-reduced-motion:no-preference){
+  .fade-in{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease}
+  .fade-in.visible{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="wrap nav-inner">
+    <a href="/" class="nav-logo" style="text-decoration:none">
+      <span class="nav-logo-dot"></span>
+      forgein
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="#commands">Commands</a>
+      <a class="nav-link" href="#registry">Registry</a>
+      <a class="nav-link" href="https://github.com/shadowmodder/forgein" target="_blank" rel="noopener">GitHub</a>
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="icon-moon" viewBox="0 0 24 24" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <a class="nav-cta" href="#install">Install free</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="wrap">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Open source &nbsp;·&nbsp; Claude Code
+      </div>
+      <h1 class="hero-h1">Three commands.<br><em>Full control</em><br>of Claude Code.</h1>
+      <p class="hero-sub">Forgein extends Claude Code with a skill optimizer, memory manager, and security scanner. One install — works in every session, every project.</p>
+
+      <div id="install" class="install-block">
+        <span class="install-cmd">curl -fsSL https://raw.githubusercontent.com/shadowmodder/forgein/main/install.sh | bash</span>
+        <button class="copy-btn" id="copy-btn" onclick="copyInstall()">copy</button>
+      </div>
+
+      <div class="hero-links">
+        <a href="https://github.com/shadowmodder/forgein" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+        <a href="https://github.com/shadowmodder/forgein/blob/main/README.md" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Read the docs
+        </a>
+        <span>MIT License</span>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="terminal-title">claude-code — /forgein optimize</span>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line"><span class="t-prompt">$ </span><span class="t-cmd">/forgein optimize</span></span>
+          <span class="t-line t-muted">↳ fetching registry · reading context · scoring skills</span>
+          <span class="t-sep"></span>
+          <span class="t-line t-green" style="font-weight:700;margin-bottom:4px">RECOMMENDED FOR YOUR WORKFLOW</span>
+          <table class="t-table">
+            <tr><td>#1</td><td>pr-monitor</td><td class="t-muted">matched: "open prs", "ci"</td></tr>
+            <tr><td>#2</td><td>code-review</td><td class="t-muted">matched: "pull request"</td></tr>
+            <tr><td>#3</td><td>commit</td><td class="t-muted">matched: "commits", "git"</td></tr>
+            <tr><td>#4</td><td>vibe-sec</td><td class="t-muted">matched: "security"</td></tr>
+            <tr><td>#5</td><td>standup</td><td class="t-muted">matched: "sprint"</td></tr>
+          </table>
+          <span class="t-sep"></span>
+          <span class="t-line"><span class="t-muted">Install all 5? </span><span class="t-green">[Enter=yes / 1,3 / none]</span><span class="t-muted"> › </span><span style="border-right:2px solid var(--green);animation:blink 1s step-end infinite">&nbsp;</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMANDS -->
+<section class="section" id="commands">
+  <div class="wrap">
+    <span class="eyebrow">Three commands</span>
+    <h2 class="section-h">Everything you need.<br>Nothing you don't.</h2>
+    <p class="section-sub">Each command is a focused tool. Together they cover the three things every Claude Code user manages manually: skills, memory, and security.</p>
+
+    <div class="cmd-grid">
+
+      <!-- optimize -->
+      <div class="cmd-row fade-in">
+        <div class="cmd-info">
+          <span class="cmd-name">/forgein optimize</span>
+          <h3 class="cmd-h">Discover skills<br>before you need them.</h3>
+          <p class="cmd-p">Reads your CLAUDE.md, memory files, and git log. Scores the entire Forgein registry against your actual workflow — not what you think you need, but what you provably do. Recommends and installs in one step.</p>
+          <ul class="cmd-features">
+            <li>Word-boundary signal matching — "pr" won't match "sprint"</li>
+            <li>Excludes already-installed skills automatically</li>
+            <li>Default is install-all — no hunting for the right input</li>
+            <li>Fetches skill files directly from GitHub via gh API</li>
+          </ul>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+            <span class="terminal-title">optimize output</span>
+          </div>
+          <div class="terminal-body">
+            <span class="t-line"><span class="t-prompt">$ </span><span class="t-cmd">/forgein optimize</span></span>
+            <span class="t-line t-muted" style="font-size:.76rem">scanning ~/.claude/CLAUDE.md · memory/ · git log</span>
+            <span class="t-sep"></span>
+            <span class="t-line"><span style="color:var(--accent-hi)">#1</span>  <span class="t-out">pr-monitor</span>  <span class="t-muted">score:6</span></span>
+            <span class="t-line t-muted" style="font-size:.76rem;padding-left:22px">CI status across open PRs</span>
+            <span class="t-line"><span style="color:var(--accent-hi)">#2</span>  <span class="t-out">commit</span>      <span class="t-muted">score:4</span></span>
+            <span class="t-line t-muted" style="font-size:.76rem;padding-left:22px">Conventional commit messages</span>
+            <span class="t-line"><span style="color:var(--accent-hi)">#3</span>  <span class="t-out">test-gen</span>    <span class="t-muted">score:3</span></span>
+            <span class="t-line t-muted" style="font-size:.76rem;padding-left:22px">Generate tests for any function</span>
+            <span class="t-sep"></span>
+            <span class="t-line t-green">✓ pr-monitor installed → ~/.claude/commands/pr-monitor.md</span>
+            <span class="t-line t-green">✓ commit installed → ~/.claude/commands/commit.md</span>
+            <span class="t-line t-green">✓ test-gen installed → ~/.claude/commands/test-gen.md</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- mem -->
+      <div class="cmd-row flip fade-in">
+        <div class="cmd-info">
+          <span class="cmd-name">/forgein mem</span>
+          <h3 class="cmd-h">Your memory,<br>under control.</h3>
+          <p class="cmd-p">Claude Code's auto-memory system builds context over time — but it's write-only from your side. Forgein mem gives you full CRUD: list what's saved, search it, add entries, prune stale ones, and audit the index for structural issues.</p>
+          <ul class="cmd-features">
+            <li>Groups memories by type: user · feedback · project · reference</li>
+            <li>Prune verifies referenced PRs, files, and functions still exist</li>
+            <li>Audit finds broken links, duplicates, and missing frontmatter</li>
+            <li>Works across all 15+ project memory directories</li>
+          </ul>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+            <span class="terminal-title">mem list</span>
+          </div>
+          <div class="terminal-body">
+            <span class="t-line"><span class="t-prompt">$ </span><span class="t-cmd">/forgein mem</span></span>
+            <span class="t-sep"></span>
+            <span class="t-line t-green" style="font-weight:700">MEMORY — 5 entries  (updated 2026-07-05)</span>
+            <span class="t-line">&nbsp;</span>
+            <span class="t-line" style="color:var(--accent-hi);font-weight:700">USER (1)</span>
+            <span class="t-line">  <span class="t-muted">•</span> user-profile.md</span>
+            <span class="t-line t-muted" style="font-size:.76rem;padding-left:14px">Engineering leader, ML/LLM focus</span>
+            <span class="t-line">&nbsp;</span>
+            <span class="t-line" style="color:var(--accent-hi);font-weight:700">FEEDBACK (2)</span>
+            <span class="t-line">  <span class="t-muted">•</span> feedback-commits.md</span>
+            <span class="t-line">  <span class="t-muted">•</span> feedback-working-style.md</span>
+            <span class="t-line">&nbsp;</span>
+            <span class="t-line" style="color:var(--accent-hi);font-weight:700">PROJECT (1)</span>
+            <span class="t-line">  <span class="t-muted">•</span> project-portfolio-sprint.md</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- sec -->
+      <div class="cmd-row fade-in">
+        <div class="cmd-info">
+          <span class="cmd-name">/forgein sec</span>
+          <h3 class="cmd-h">Security check<br>before every push.</h3>
+          <p class="cmd-p">Runs a heuristic security scan against staged git changes — or any file or directory you point it at. Checks eight vulnerability classes and ranks findings by severity. Honest about what it is: a vibe check, not a full audit.</p>
+          <ul class="cmd-features">
+            <li>Secrets, SQL/command injection, path traversal, SSRF, XSS</li>
+            <li>Insecure deserialization and hardcoded credentials</li>
+            <li>If no staged changes, asks for a path — never scans silently</li>
+            <li>Critical → high → medium ranking with attack scenarios</li>
+          </ul>
+        </div>
+        <div class="terminal">
+          <div class="terminal-bar">
+            <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+            <span class="terminal-title">sec — staged changes</span>
+          </div>
+          <div class="terminal-body">
+            <span class="t-line"><span class="t-prompt">$ </span><span class="t-cmd">/forgein sec</span></span>
+            <span class="t-sep"></span>
+            <span class="t-line" style="color:var(--red);font-weight:700">SECURITY FINDINGS</span>
+            <span class="t-line">&nbsp;</span>
+            <span class="t-line"><span style="color:var(--red)">MEDIUM</span>  monitor.py:109  Credential in URL</span>
+            <span class="t-line t-muted" style="font-size:.76rem;padding-left:2px">f"https://token:{PAT}@github.com/..."</span>
+            <span class="t-line t-muted" style="font-size:.76rem;padding-left:2px">PAT stored in .git/config, visible in logs</span>
+            <span class="t-line">&nbsp;</span>
+            <span class="t-line"><span style="color:var(--yellow)">LOW</span>     monitor.py:278  Predictable tmp path</span>
+            <span class="t-line t-muted" style="font-size:.76rem;padding-left:2px">Path("/tmp/pr_status.md").write_text(...)</span>
+            <span class="t-sep"></span>
+            <span class="t-line t-muted">Summary: 0 critical, 1 medium, 1 low</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ALGORITHM -->
+<section class="section">
+  <div class="wrap">
+    <span class="eyebrow">How optimize works</span>
+    <h2 class="section-h">Signal matching,<br>not guessing.</h2>
+    <p class="section-sub">optimize doesn't ask you what you need. It reads your actual workflow context and scores every skill in the registry against it — whole-word matching, so "pr" won't fire on "sprint".</p>
+
+    <div class="algo-flow">
+      <div class="algo-step">
+        <div class="algo-num">STEP 01</div>
+        <div class="algo-title">Fetch registry</div>
+        <div class="algo-desc">Pulls registry.json via gh api — no CDN lag, no auth issues. Falls back to raw GitHub if gh isn't available.</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-num">STEP 02</div>
+        <div class="algo-title">Read context</div>
+        <div class="algo-desc">Reads CLAUDE.md (global + project), memory index files, and git log. Builds a single context string from all sources.</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-num">STEP 03</div>
+        <div class="algo-title">Score skills</div>
+        <div class="algo-desc">For each registry skill: counts whole-word matches of its signals and tags in your context. Excludes already-installed skills.</div>
+      </div>
+      <div class="algo-step">
+        <div class="algo-num">STEP 04</div>
+        <div class="algo-title">Install</div>
+        <div class="algo-desc">Presents top 5 with matched signals. Default is Enter = install all. Fetches each skill file and writes to ~/.claude/commands/.</div>
+      </div>
+    </div>
+
+    <div class="algo-code">
+<span class="am"># Scoring formula</span>
+<span class="ac">score</span>(skill) = Σ <span class="ag">whole_word_match</span>(term, context) <span class="am">for</span> term <span class="am">in</span> skill.signals + skill.tags
+&nbsp;
+<span class="am"># Whole-word match: char before/after must be non-alphanumeric</span>
+<span class="am"># "pr" → matches "open prs" ✓   "pr" → does NOT match "sprint" ✗</span>
+&nbsp;
+<span class="am"># Context sources (all concatenated)</span>
+context = <span class="ag">read</span>(~/.claude/CLAUDE.md) + <span class="ag">read</span>(./CLAUDE.md)
+        + <span class="ag">find</span>(MEMORY.md files) + <span class="ag">git</span> log --oneline -20
+    </div>
+  </div>
+</section>
+
+<!-- REGISTRY -->
+<section class="section" id="registry">
+  <div class="wrap">
+    <span class="eyebrow">Skill registry</span>
+    <h2 class="section-h">10 skills.<br>Open to contributions.</h2>
+    <p class="section-sub">The public registry is a GitHub repo. Every skill is a markdown file — instructions to Claude. Install individually or let optimize pick what fits your workflow.</p>
+
+    <div class="registry-grid">
+      <div class="skill-card forgein-card">
+        <span class="skill-cmd">/forgein</span>
+        <div class="skill-name">Forgein</div>
+        <div class="skill-desc">The full toolkit: optimize, mem, and sec in one command.</div>
+        <span class="skill-tag">meta</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/review</span>
+        <div class="skill-name">Code Review</div>
+        <div class="skill-desc">Parallel review passes across bugs, perf, security, and style. Ranked by severity.</div>
+        <span class="skill-tag">git</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/commit</span>
+        <div class="skill-name">Smart Commit</div>
+        <div class="skill-desc">Generates conventional commit messages from staged changes with scope detection.</div>
+        <span class="skill-tag">git</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/standup</span>
+        <div class="skill-name">Standup</div>
+        <div class="skill-desc">Daily standup from git log and open PRs. Done / doing / blocked.</div>
+        <span class="skill-tag">productivity</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/pr-monitor</span>
+        <div class="skill-name">PR Monitor</div>
+        <div class="skill-desc">CI status across all open PRs. Flags what needs attention vs. unfixable infra checks.</div>
+        <span class="skill-tag">ci</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/test-gen</span>
+        <div class="skill-name">Test Gen</div>
+        <div class="skill-desc">Generates idiomatic tests for any function. Auto-detects pytest, jest, or go test.</div>
+        <span class="skill-tag">testing</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/explain</span>
+        <div class="skill-name">Explain Codebase</div>
+        <div class="skill-desc">Architecture map for new contributors — entry points, key abstractions, data flow.</div>
+        <span class="skill-tag">docs</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/changelog</span>
+        <div class="skill-name">Changelog</div>
+        <div class="skill-desc">CHANGELOG.md from git log between tags. Groups feat / fix / breaking.</div>
+        <span class="skill-tag">release</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/mem</span>
+        <div class="skill-name">Claude Mem</div>
+        <div class="skill-desc">Standalone memory manager — same as /forgein mem, installed separately.</div>
+        <span class="skill-tag">memory</span>
+      </div>
+      <div class="skill-card">
+        <span class="skill-cmd">/sec</span>
+        <div class="skill-name">Vibe Sec</div>
+        <div class="skill-desc">Standalone security checker — same as /forgein sec, installed separately.</div>
+        <span class="skill-tag">security</span>
+      </div>
+    </div>
+
+    <div class="registry-cta">
+      <span>Have a skill to share?</span>
+      <a href="https://github.com/shadowmodder/forgein/blob/main/README.md#submit-a-skill" target="_blank" rel="noopener">Submit a pull request →</a>
+    </div>
+  </div>
+</section>
+
+<!-- PRO -->
+<section class="section">
+  <div class="wrap">
+    <div class="pro-section fade-in">
+      <div>
+        <span class="pro-badge">Coming soon</span>
+        <h2 class="pro-h">Forgein Pro.<br>Built for teams.</h2>
+        <p class="pro-p">The public registry and all three commands stay free forever. Pro adds the layer teams actually need: shared skill sets, cross-machine sync, and usage visibility.</p>
+        <ul class="pro-features">
+          <li>Private skill registries for your org — install from your own GitHub</li>
+          <li>Sync skills across all your machines automatically</li>
+          <li>Share skill sets with your team — one command, everyone's configured</li>
+          <li>Usage analytics — see which skills your team uses most</li>
+          <li>Compliance scanning presets for regulated environments</li>
+        </ul>
+      </div>
+      <div>
+        <div class="pro-form">
+          <label for="email">Get early access</label>
+          <p style="font-size:.85rem;color:var(--muted2);margin-bottom:12px;line-height:1.5">We'll email you when Forgein Pro opens. No spam — one email when it's ready.</p>
+          <input class="pro-input" type="email" id="email" placeholder="you@company.com" autocomplete="email">
+          <button class="pro-submit" onclick="submitWaitlist()">Join the waitlist</button>
+          <p class="pro-note" id="waitlist-msg">No spam. One email when Pro launches.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap footer-inner" style="width:100%">
+    <span class="footer-logo">forgein</span>
+    <div class="footer-links">
+      <a href="https://github.com/shadowmodder/forgein" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/shadowmodder/forgein/blob/main/README.md" target="_blank" rel="noopener">Docs</a>
+      <a href="https://github.com/shadowmodder/forgein/blob/main/registry.json" target="_blank" rel="noopener">Registry</a>
+      <a href="mailto:sudhir.vissa@gmail.com">Contact</a>
+    </div>
+    <span class="footer-right">MIT · forgein.ai</span>
+  </div>
+</footer>
+
+<style>
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+
+<script>
+// Theme toggle
+const root = document.documentElement;
+const stored = localStorage.getItem('theme');
+if (stored) root.setAttribute('data-theme', stored);
+
+const sunIcon = document.getElementById('icon-sun');
+const moonIcon = document.getElementById('icon-moon');
+
+function updateIcons() {
+  const isDark = root.getAttribute('data-theme') === 'dark' ||
+    (!root.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  sunIcon.style.display = isDark ? 'block' : 'none';
+  moonIcon.style.display = isDark ? 'none' : 'block';
+}
+updateIcons();
+
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const current = root.getAttribute('data-theme') ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = current === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  updateIcons();
+});
+
+// Copy install command
+function copyInstall() {
+  const cmd = 'curl -fsSL https://raw.githubusercontent.com/shadowmodder/forgein/main/install.sh | bash';
+  navigator.clipboard.writeText(cmd).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = 'copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Waitlist form
+function submitWaitlist() {
+  const email = document.getElementById('email').value.trim();
+  if (!email || !email.includes('@')) {
+    document.getElementById('email').focus();
+    return;
+  }
+  const msg = document.getElementById('waitlist-msg');
+  msg.textContent = `✓ ${email} added to the waitlist.`;
+  msg.style.color = 'var(--green)';
+  document.getElementById('email').value = '';
+  // In production: POST to your waitlist endpoint
+}
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
