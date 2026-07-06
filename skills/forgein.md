@@ -19,7 +19,9 @@ Discover and install Claude skills from the Forgein registry tailored to your wo
 
 **Steps:**
 
-1. Use WebFetch to GET `https://raw.githubusercontent.com/shadowmodder/forgein/main/registry.json`
+1. Fetch the registry — try in order until one succeeds:
+   - `gh api repos/shadowmodder/forgein/contents/registry.json --jq '.content' | base64 -d` (reliable, uses gh auth)
+   - WebFetch `https://raw.githubusercontent.com/shadowmodder/forgein/main/registry.json`
 
 2. Run `ls ~/.claude/commands/ 2>/dev/null` via Bash — these are already-installed skills (strip `.md` extension)
 
@@ -48,7 +50,7 @@ Discover and install Claude skills from the Forgein registry tailored to your wo
 
 6. Ask: **"Which would you like to install? Enter numbers (e.g. 1,3), 'all', or 'none':"**
 
-7. For each selected skill: use WebFetch to download `https://raw.githubusercontent.com/shadowmodder/forgein/main/<file>` then Write it to `~/.claude/commands/<command>.md`
+7. For each selected skill: fetch the file content with `gh api repos/shadowmodder/forgein/contents/<file> --jq '.content' | base64 -d` and Write it to `~/.claude/commands/<command>.md`
 
 8. Confirm: "✓ Installed: X, Y. Type /<command> to start using each."
 
