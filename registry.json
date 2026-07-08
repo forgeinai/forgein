@@ -1,7 +1,12 @@
 {
-  "version": "1.0.0",
-  "updated": "2026-07-05",
-  "registry": "https://github.com/shadowmodder/forgein",
+  "version": "1.1.0",
+  "updated": "2026-07-08",
+  "registry": "https://github.com/forgeinai/forgein",
+  "adapters": [
+    { "id": "cursor",    "file": "adapters/cursor/inject.sh",    "description": "Writes active context to .cursorrules" },
+    { "id": "windsurf",  "file": "adapters/windsurf/inject.sh",  "description": "Writes active context to .windsurfrules" },
+    { "id": "copilot",   "file": "adapters/copilot/inject.sh",   "description": "Writes active context to .github/copilot-instructions.md" }
+  ],
   "skills": [
     {
       "id": "forgein",

@@ -2,14 +2,14 @@
 
 **The Claude productivity toolkit.** One command. Three superpowers.
 
-→ [forgein.ai](https://forgein.ai) · [github.com/shadowmodder/forgein](https://github.com/shadowmodder/forgein)
+→ [forgein.ai](https://forgein.ai) · [github.com/forgeinai/forgein](https://github.com/forgeinai/forgein)
 
 ---
 
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/shadowmodder/forgein/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/forgeinai/forgein/main/install.sh | bash
 ```
 
 One file drops into `~/.claude/commands/forgein.md`. Open a new Claude Code session — `/forgein` appears immediately.
@@ -38,7 +38,7 @@ One file drops into `~/.claude/commands/forgein.md`. Open a new Claude Code sess
 
 ```
 1. FETCH REGISTRY
-   gh api repos/shadowmodder/forgein/contents/registry.json | base64 -d
+   gh api repos/forgeinai/forgein/contents/registry.json | base64 -d
    → fallback: WebFetch raw.githubusercontent.com
 
 2. INVENTORY INSTALLED

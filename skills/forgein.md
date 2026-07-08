@@ -85,9 +85,9 @@ curl -sf -H "Authorization: Bearer <token>" https://api.forgein.ai/api/auth/user
 
 Try in order, use first that succeeds:
 ```bash
-gh api repos/shadowmodder/forgein/contents/registry.json --jq '.content' | base64 -d
+gh api repos/forgeinai/forgein/contents/registry.json --jq '.content' | base64 -d
 ```
-Fallback: WebFetch `https://raw.githubusercontent.com/shadowmodder/forgein/main/registry.json`
+Fallback: WebFetch `https://raw.githubusercontent.com/forgeinai/forgein/main/registry.json`
 
 Parse the JSON. Extract the `skills` array.
 
@@ -165,7 +165,7 @@ Default (Enter with no input) = install all recommendations.
 For each selected skill:
 - Public skills: fetch from GitHub and write to `~/.claude/commands/<install_as>`
   ```bash
-  gh api repos/shadowmodder/forgein/contents/<file> --jq '.content' | base64 -d
+  gh api repos/forgeinai/forgein/contents/<file> --jq '.content' | base64 -d
   ```
 - Private skills: fetch content from API
   ```bash
@@ -216,7 +216,7 @@ PROJECT (1)
   • project-portfolio-sprint.md — Active OSS contribution sprint
 
 REFERENCE (1)
-  • reference-blog-repo.md — shadowmodder.github.io setup notes
+  • reference-blog-repo.md — shadowmodder.github.io setup notes (personal blog, unrelated to forgeinai)
 ```
 
 ---

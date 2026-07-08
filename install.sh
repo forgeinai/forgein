@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REGISTRY="https://raw.githubusercontent.com/shadowmodder/forgein/main"
+REGISTRY="https://raw.githubusercontent.com/forgeinai/forgein/main"
 COMMANDS_DIR="$HOME/.claude/commands"
 
 mkdir -p "$COMMANDS_DIR"
