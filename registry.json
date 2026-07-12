@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "updated": "2026-07-08",
+  "updated": "2026-07-12",
   "registry": "https://github.com/forgeinai/forgein",
   "adapters": [
     { "id": "cursor",    "file": "adapters/cursor/inject.sh",    "description": "Writes active context to .cursorrules" },
@@ -12,11 +12,11 @@
       "id": "forgein",
       "command": "forgein",
       "name": "Forgein",
-      "description": "The full Forgein toolkit: skill optimizer, memory manager, and security checker in one command.",
-      "tags": ["productivity", "meta", "memory", "security", "skills"],
-      "signals": ["productivity", "workflow", "memory", "skills", "security"],
+      "description": "The full Forgein toolkit: auth, skill optimizer, memory manager, multi-tool context export (Copilot/ChatGPT/Gemini/Cursor), and security checker.",
+      "tags": ["productivity", "meta", "memory", "security", "skills", "copilot", "chatgpt", "gemini", "cursor"],
+      "signals": ["productivity", "workflow", "memory", "skills", "security", "copilot", "chatgpt", "gemini", "cursor", "context sync"],
       "author": "forgein-ai",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "file": "skills/forgein.md",
       "install_as": "forgein.md"
     },

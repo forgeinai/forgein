@@ -1,5 +1,5 @@
 ---
-description: Forgein — Claude productivity toolkit. Subcommands: auth (authenticate), optimize (discover and install skills), mem (manage and sync memory), sec (security check).
+description: Forgein — Claude productivity toolkit. Subcommands: auth (authenticate), optimize (discover and install skills), mem (manage and sync memory), export (push context to Copilot/ChatGPT/Gemini/Cursor), sec (security check).
 ---
 
 Parse `$ARGUMENTS` — first word is the subcommand. Route to the correct section. If no argument or unrecognized subcommand: print the usage table below and stop.
@@ -7,18 +7,23 @@ Parse `$ARGUMENTS` — first word is the subcommand. Route to the correct sectio
 ```
 FORGEIN — Claude productivity toolkit
 
-  /forgein auth            Authenticate CLI with your forgein account
-  /forgein optimize        Discover and install skills that fit your workflow
-  /forgein mem             List all memories (default)
-  /forgein mem list        List memories grouped by type
-  /forgein mem search <q>  Search memory bodies for a keyword
-  /forgein mem add <type> <content>  Add a new memory
-  /forgein mem prune       Remove stale memories interactively
-  /forgein mem audit       Check index for broken links and duplicates
-  /forgein mem sync        Sync memory files with forgein cloud
-  /forgein mem sync --team Pull team-shared memory from your org
-  /forgein sec             Security check on staged git changes
-  /forgein sec <path>      Security check on a specific file or directory
+  /forgein auth                   Authenticate CLI with your forgein account
+  /forgein optimize               Discover and install skills that fit your workflow
+  /forgein mem                    List all memories (default)
+  /forgein mem list               List memories grouped by type
+  /forgein mem search <q>         Search memory bodies for a keyword
+  /forgein mem add <type> <body>  Add a new memory
+  /forgein mem prune              Remove stale memories interactively
+  /forgein mem audit              Check index for broken links and duplicates
+  /forgein mem sync               Sync memory files with forgein cloud
+  /forgein mem sync --team        Pull team-shared memory from your org
+  /forgein export copilot         Write .github/copilot-instructions.md from cloud memory
+  /forgein export cursor          Write .cursorrules from cloud memory
+  /forgein export windsurf        Write .windsurfrules from cloud memory
+  /forgein export chatgpt         Show formatted text to paste into ChatGPT Custom Instructions
+  /forgein export gemini          Show formatted text to paste into a Gemini Gem
+  /forgein sec                    Security check on staged git changes
+  /forgein sec <path>             Security check on a specific file or directory
 ```
 
 ---
@@ -482,6 +487,179 @@ TEAM SYNC COMPLETE
   — team-alice-feedback-style.md      (already exists, skipped)
 
 ✓ 3 pulled, 1 skipped — Claude will read these automatically in this project.
+```
+
+---
+
+## export
+
+Export your forgein cloud memory as context for another AI tool. The forgein API formats your memories specifically for each target — project conventions for Copilot's instruction file, a split Custom Instructions payload for ChatGPT, a unified system prompt for Gemini.
+
+Parse the next word as the export target. If missing or unrecognised, print:
+```
+Usage: /forgein export <target>
+
+Targets:
+  copilot    Write .github/copilot-instructions.md (GitHub Copilot)
+  cursor     Write .cursorrules (Cursor)
+  windsurf   Write .windsurfrules (Windsurf)
+  chatgpt    Show text to paste into ChatGPT Custom Instructions
+  gemini     Show text to paste into a Gemini Gem or AI Studio system prompt
+```
+and stop.
+
+### Algorithm
+
+**Step 1 — Load token**
+
+```bash
+TOKEN=$(cat ~/.config/forgein/token 2>/dev/null)
+```
+
+If empty: print `✗ Not authenticated. Run /forgein auth first.` and stop.
+
+**Step 2 — Detect project path**
+
+```bash
+PROJECT_PATH=$(pwd | sed 's|/|-|g')
+```
+
+**Step 3 — Fetch adapter output from the forgein API**
+
+For file-based targets (`copilot`, `cursor`, `windsurf`):
+```bash
+CONTENT=$(curl -sf -H "Authorization: Bearer $TOKEN" \
+  "https://api.forgein.ai/api/adapters/<target>?projectPath=$PROJECT_PATH")
+STATUS=$?
+```
+If `STATUS` is non-zero or `CONTENT` is empty: print `✗ Could not fetch context from api.forgein.ai — check your connection.` and stop.
+
+For display-only targets (`chatgpt`, `gemini`):
+```bash
+RESULT=$(curl -sf -H "Authorization: Bearer $TOKEN" \
+  "https://api.forgein.ai/api/adapters/<target>?projectPath=$PROJECT_PATH")
+STATUS=$?
+```
+If `STATUS` is non-zero or `RESULT` is empty: print `✗ Could not fetch context from api.forgein.ai — check your connection.` and stop.
+
+**Step 4 — Write file or display, by target**
+
+---
+
+#### copilot
+
+```bash
+mkdir -p .github
+printf '%s\n' "$CONTENT" > .github/copilot-instructions.md
+BYTES=$(wc -c < .github/copilot-instructions.md)
+```
+
+Print:
+```
+✓ Written to .github/copilot-instructions.md (N bytes)
+
+Copilot reads this file automatically in VS Code, JetBrains, and GitHub.com.
+Commit it to share with your team:
+
+  git add .github/copilot-instructions.md && git commit -m "chore: update Copilot context from forgein"
+
+Re-run /forgein export copilot after each /forgein mem sync to keep it current.
+```
+
+---
+
+#### cursor
+
+```bash
+printf '%s\n' "$CONTENT" > .cursorrules
+BYTES=$(wc -c < .cursorrules)
+```
+
+Print:
+```
+✓ Written to .cursorrules (N bytes)
+
+Cursor reads this file automatically in the current project.
+Re-run /forgein export cursor after each /forgein mem sync to keep it current.
+```
+
+---
+
+#### windsurf
+
+```bash
+printf '%s\n' "$CONTENT" > .windsurfrules
+BYTES=$(wc -c < .windsurfrules)
+```
+
+Print:
+```
+✓ Written to .windsurfrules (N bytes)
+
+Windsurf reads this file automatically in the current project.
+Re-run /forgein export windsurf after each /forgein mem sync to keep it current.
+```
+
+---
+
+#### chatgpt
+
+Parse the JSON response to extract `whatToKnow`, `howToRespond`, and `fileCount`:
+
+```bash
+WHAT=$(echo "$RESULT" | jq -r '.whatToKnow')
+HOW=$(echo "$RESULT" | jq -r '.howToRespond')
+COUNT=$(echo "$RESULT" | jq -r '.fileCount')
+```
+
+Display:
+```
+CHATGPT CUSTOM INSTRUCTIONS — <fileCount> memory files
+
+Where to paste:
+  ChatGPT → avatar (top-right) → Settings → Personalization → Custom Instructions
+
+── "What would you like ChatGPT to know about you?" ──────────────
+
+<whatToKnow>
+
+── "How would you like ChatGPT to respond?" ───────────────────────
+
+<howToRespond>
+
+───────────────────────────────────────────────────────────────────
+Tip: re-run /forgein export chatgpt after syncing new memories to get updated text.
+```
+
+---
+
+#### gemini
+
+Parse the JSON response to extract `systemPrompt` and `fileCount`:
+
+```bash
+PROMPT=$(echo "$RESULT" | jq -r '.systemPrompt')
+COUNT=$(echo "$RESULT" | jq -r '.fileCount')
+```
+
+Display:
+```
+GEMINI SYSTEM PROMPT — <fileCount> memory files
+
+Option A — Gemini Gem (persistent assistant with your context):
+  1. Go to gemini.google.com/gems/create
+  2. Paste the text below into "Instructions"
+  3. Save the Gem and use it for all your coding sessions
+
+Option B — Google AI Studio (one-off or API use):
+  Paste the text below into the "System instructions" field
+
+── System prompt ──────────────────────────────────────────────────
+
+<systemPrompt>
+
+───────────────────────────────────────────────────────────────────
+Tip: re-run /forgein export gemini after syncing new memories to get updated text.
 ```
 
 ---
