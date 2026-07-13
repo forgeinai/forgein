@@ -36,7 +36,7 @@ Once synced, every adapter below stays current automatically after every `mem sy
 
 | Adapter | What it writes | How |
 |---|---|---|
-| **Claude Code** | Auto-injected via `UserPromptSubmit` hook | Always on |
+| **Claude Code** | Reads your memory files via the `/forgein` skill — run `/forgein mem sync` to push, no auto-injection | `/forgein mem sync` |
 | **MCP Server** | JSON-RPC 2.0 over stateless HTTP, auto-discovered at `/.well-known/mcp` | `api.forgein.ai/api/adapters/mcp` |
 | **Cursor** | `.cursorrules` (or `~/.cursor/rules` globally) | `/forgein export cursor` |
 | **Windsurf** | `.windsurfrules` (or Cascade global memory) | `/forgein export windsurf` |

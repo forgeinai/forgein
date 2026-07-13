@@ -7,7 +7,7 @@ All adapters call the same forgein API — your context is defined once, injecte
 ## Prerequisites
 
 1. A forgein account (free): [app.forgein.ai/signup](https://app.forgein.ai/signup)
-2. The CLI installed: `curl -fsSL https://app.forgein.ai/cli/install.sh | bash`
+2. The CLI installed: `curl -fsSL https://raw.githubusercontent.com/forgeinai/forgein/main/install.sh | bash`
 3. Authenticated: `/forgein auth` in Claude Code, or manually:
    ```bash
    mkdir -p ~/.config/forgein
