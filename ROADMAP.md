@@ -30,6 +30,9 @@ This file covers what's shipped, what's in progress, and what's coming. It's upd
 - [x] Webhooks — event delivery for memory syncs, with retry queue
 - [x] AI adoption analytics — per-member usage breakdown across all AI tools, audit log
 - [x] `@forgein/adapter-sdk` on npm — build your own adapter or integration
+- [x] Context inheritance — adapter output layers org baseline → team → project → personal
+- [x] Org context templates — admin CRUD dashboard for managing the org baseline context layer
+- [x] Browser extension — Chrome MV3, auto-injects context into ChatGPT and Gemini on click
 
 ### Skills in the registry (10)
 `/forgein`, `/sec`, `/mem`, `/review`, `/commit`, `/standup`, `/pr-monitor`, `/test-gen`, `/explain`, `/changelog`
@@ -38,8 +41,6 @@ This file covers what's shipped, what's in progress, and what's coming. It's upd
 
 ## In progress
 
-- [ ] **Context inheritance** — adapter output layers org baseline → team → project → personal, in order. Currently serves personal context only.
-- [ ] **Org context templates UI** — admin dashboard for managing the org baseline layer.
 - [ ] **Public GitHub Projects board** — mirror of this file with community-voted priorities.
 
 ---
@@ -47,7 +48,7 @@ This file covers what's shipped, what's in progress, and what's coming. It's upd
 ## Planned
 
 ### Near-term (next 60 days)
-- [ ] **Browser extension** — auto-inject forgein context into chatgpt.com and gemini.google.com without the paste step
+- [x] **Browser extension** — Chrome MV3 extension with floating button on chatgpt.com and gemini.google.com; injects your context on click
 - [ ] **Context versioning** — who changed which org context, when, with rollback
 - [ ] **Compliance export** — full audit trail as CSV/JSON (SOC2 evidence)
 - [ ] **SAML / SSO** — Okta, Google Workspace, Azure AD (schema exists; hardening in progress)
