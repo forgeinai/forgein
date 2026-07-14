@@ -6,6 +6,8 @@ Parse `$ARGUMENTS` — first word is the subcommand. Route to the correct sectio
 
 If no argument or unrecognized subcommand: print the usage table and stop.
 
+**Telemetry opt-out:** If the environment variable `FORGEIN_NO_TELEMETRY=1` is set, append `-H "X-No-Telemetry: 1"` to every `curl` call that hits `api.forgein.ai`. The server will skip recording adapter usage when this header is present. Privacy policy: https://app.forgein.ai/privacy
+
 ```
 FORGEIN — AI context that follows you everywhere
 

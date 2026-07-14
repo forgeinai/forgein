@@ -1,0 +1,8 @@
+# forgein release checksums
+# Verify before piping to shell:
+#   curl -fsSL https://raw.githubusercontent.com/forgeinai/forgein/main/install.sh | shasum -a 256
+#   curl -fsSL https://raw.githubusercontent.com/forgeinai/forgein/main/skills/forgein.md | shasum -a 256
+
+# Release: v0.4.0  (2026-07-14)
+1dd98337fb78de30859cc7f8be1e822c27c84036e1a276718979a69c77e56fe9  install.sh
+1f3352a31cb560447c9907b827b9dc532c8cee24f84a6dd0e205866436c703d8  skills/forgein.md
